@@ -14,7 +14,7 @@ const { Option } = Select;
 
 
 const App = () => {
-  const adress = 'http://localhost:3001'
+  const adress = 'https://easy-gift-ua.pp.ua/api'
   const [isModalOpen, setIsModalOpen] = React.useState(false);
   const [isModalOpenAddGift, setIsModalOpenAddGift] = React.useState(false);
   const [masEl,editmasEl] = React.useState([])
