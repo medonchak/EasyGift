@@ -14,7 +14,7 @@ const { Option } = Select;
 
 
 const App = () => {
-  const adress = 'http://localhost:3001'
+  const adress = 'https://easy-gift-ua.pp.ua/api'
   const [isModalOpen, setIsModalOpen] = React.useState(false);
   const [isModalOpenAddGift, setIsModalOpenAddGift] = React.useState(false);
   const [masEl,editmasEl] = React.useState([])
@@ -131,18 +131,23 @@ const App = () => {
 };
 
 const CardElement = (props) => {
-
+  let [loading, editloading] = React.useState(true)
   let [printerImg,editprinterImg] = React.useState('')
   
   React.useEffect(()=>{ 
-      if(props.gift.img!==undefined && props.gift.img!=='' )
-      axios.get(props.adress+'/imgfoto/'+props.gift.img, {responseType: "arraybuffer"})
-      .then(function (response) {
-         editprinterImg(URL.createObjectURL(new Blob([response.data],  {type:'image/png'})))
-         })
+      if(props.gift.img!==undefined && props.gift.img!=='' ) {
+        axios.get(props.adress+'/imgfoto/'+props.gift.img, {responseType: "arraybuffer"})
+        .then(function (response) {
+           editprinterImg(URL.createObjectURL(new Blob([response.data],  {type:'image/png'})))
+           })
+      }
+      setTimeout(() => {
+        editloading(false); 
+      }, 300); 
+    
   },[props])
   return <Card hoverable style={{border:'none', textAlign:'center'}}
-         cover={  <img alt="example" src={printerImg}  />} >
+         cover={loading===true ? <Spin size="large" /> :  <img alt="example" src={printerImg}  />} >
              
              <span style={{fontSize: 'clamp(6px, 1vw, 24px)', lineHeight: '0.8',fontWeight:'800'}}>{props.gift.name} </span> <br/>
              <span style={{fontSize: 'clamp(6px, 1vw, 24px)', lineHeight: '0.8', }}> Вартість: {props.gift.price} грн </span>
