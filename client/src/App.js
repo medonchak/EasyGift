@@ -2,7 +2,7 @@ import React from 'react';
 import './index.css';
 import axios from 'axios'
 import { FilterOutlined, PlusOutlined, SearchOutlined  } from '@ant-design/icons';
-import { Breadcrumb, Layout, Menu, Card, Upload, Input, Row, Col, Select, InputNumber, Checkbox, Form, Modal, Button} from 'antd';
+import { Breadcrumb, Layout, Menu, Card, Upload, Input, Row, Col, Select, InputNumber, Checkbox, Form, Spin, Modal, Button} from 'antd';
 import {  FaInstagram, FaLinkedin } from 'react-icons/fa';
 import TextArea from 'antd/es/input/TextArea';
 import logo from './img/LogoEasyGift.png'
