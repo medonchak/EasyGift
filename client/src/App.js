@@ -14,7 +14,7 @@ const { Option } = Select;
 
 
 const App = () => {
-  const adress = 'https://easy-gift-ua.pp.ua/api'
+  const adress = 'http://easy-gift-ua.pp.ua/api'
   const [isModalOpen, setIsModalOpen] = React.useState(false);
   const [isModalOpenAddGift, setIsModalOpenAddGift] = React.useState(false);
   const [masEl,editmasEl] = React.useState([])
@@ -28,6 +28,7 @@ const App = () => {
   React.useEffect(()=>{
       axios.get(adress+'/gift/')
       .then(function (response) {
+        console.log(response)
         editmasEl(response.data)
         editmasActiveEl(response.data.filter(c=>c.type===selectedMenuItem))
          })
@@ -61,7 +62,6 @@ const App = () => {
     setSelectedMenuItem(e.key);
   };
   const masCard = masctiveEl.map(c=><CardElement adress={adress} gift={c}/>)
-  
   return (
     <Layout style={{ minHeight: '100vh' }}>  
     
@@ -69,15 +69,16 @@ const App = () => {
      
             <div style={{ display: 'flex', alignItems: 'center', marginLeft:'5%' }}>
                 <img src={logo} alt="Logo" style={{ height: '35%', width: '35%', zIndex:'100' }} />
-                <span style={{ fontSize: '24px', fontWeight: 'bold', padding:'0',margin:'0' }}> Майстерня смачних подарунків <br style={{padding:'0',margin:'0'}}></br> Easy.Gift.UA </span>
+                <span style={{ fontSize: 'clamp(16px, 2vw, 24px)',  fontWeight: 'bold', padding:'0',margin:'0',lineHeight: '1.1' }}> Майстерня смачних подарунків 
+                  <br/> Easy.Gift.UA </span>
             </div>
             <div style={{ display: 'flex', alignItems: 'center', marginRight:'5%' }}>
               <FilterOutlined onClick={showModal} style={{fontSize:'25px',marginRight:'10px'}}/>
               <Search
                 placeholder="Пошук..."
                 enterButton={<SearchOutlined />}
-                size="large"
-                style={{ maxWidth: '400px', width: '100%',marginRight:'8%' }}
+                size= {window.innerWidth <= 768 ? "small" : "large"}
+                style={{  maxWidth:'400px', width: '25vw', marginRight:'8%',fontSize:'clamp(16px, 2vw, 24px)' }}
               />
              
             </div>
@@ -86,7 +87,7 @@ const App = () => {
 
           <Content style={{ margin: '16px', padding: '16px', background: '#fff' }} >
               <div style={{ display: 'flex',justifyContent: 'center', marginBottom: '16px',marginTop:'1%', width:'100%' }}> 
-                <Menu mode="horizontal" defaultSelectedKeys={["М'ясні"]} onClick={handleMenuClick} items={items1} style={{ borderBottom: 'none', display: 'flex', width:'100%',justifyContent: 'center', fontSize:'18px' }} /> 
+                <Menu mode="horizontal" defaultSelectedKeys={["М'ясні"]} onClick={handleMenuClick} items={items1} style={{ borderBottom: 'none', display: 'flex', width:'100%',justifyContent: 'center', fontSize: 'clamp(16px, 2vw, 24px)' }} /> 
                 
               </div>
               <div style={{display:'flex', justifyContent:'end', marginLeft:'8%' }}>
@@ -96,7 +97,7 @@ const App = () => {
               <div  style={{marginLeft:'15%',marginRight:'15%', marginTop:'7%'}}>  
                   <Row gutter={[26, 26]}>
                         {masCard.map((card, index) => (
-                          <Col  key={index}  xs={24} sm={12} md={8} lg={10} xl={4}>
+                          <Col  key={index}  xs={8} sm={8} md={10} lg={10} xl={4}>
                               {card}
                           </Col>
                         ))}
@@ -137,6 +138,7 @@ const App = () => {
 const CardElement = (props) => {
 
   let [printerImg,editprinterImg] = React.useState('')
+  console.log(printerImg)
   React.useEffect(()=>{ 
       if(props.gift.img!==undefined && props.gift.img!=='' )
       axios.get(props.adress+'/imgfoto/'+props.gift.img, {responseType: "arraybuffer"})
@@ -145,7 +147,7 @@ const CardElement = (props) => {
          })
   },[])
   return <Card hoverable style={{border:'none', textAlign:'center'}}
-         cover={<img alt="example" src={printerImg} />} >
+         cover={<img alt="example" src={printerImg}  />} >
               <Meta title={props.gift.name} />
               Вартість: {props.gift.price}
           </Card>
@@ -244,6 +246,7 @@ const AddGift =(props)=>{
         opis: values.opis,
         img:values.img.file.name,
         category: values.category,
+        type:values.type,
         from_gift: values.from_gift,
           }
  
@@ -294,7 +297,7 @@ const AddGift =(props)=>{
                     <Select.Option key={8} value="День народження">День народження</Select.Option>
               </Select>
         </Form.Item>  
-        <Form.Item   name="type"   label="Тип " > 
+        <Form.Item   name="type"   label="Тип" > 
                 <Select mode="tags">
                             <Select.Option key={1}  value="М'ясні"> М'ясні</Select.Option>
                             <Select.Option key={2}  value="Солодкі"> Солодкі </Select.Option>
