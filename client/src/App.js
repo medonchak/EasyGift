@@ -14,11 +14,10 @@ const { Option } = Select;
 
 
 const App = () => {
-  const adress = 'http://easy-gift-ua.pp.ua/api'
+  const adress = 'http://localhost:3001'
   const [isModalOpen, setIsModalOpen] = React.useState(false);
   const [isModalOpenAddGift, setIsModalOpenAddGift] = React.useState(false);
   const [masEl,editmasEl] = React.useState([])
-  const [masctiveEl,editmasActiveEl] = React.useState([])
   const [selectedMenuItem, setSelectedMenuItem] = React.useState("М'ясні");
   const items1 = ["М'ясні", "Солодкі", "Сухофрукти", "З мильними квітами","З живими квітами" ].map((key) => ({
     key,
@@ -26,18 +25,14 @@ const App = () => {
   }));
   
   React.useEffect(()=>{
-      axios.get(adress+'/gift/')
+      axios.get(adress+'/gift')
       .then(function (response) {
-        console.log(response)
-        editmasEl(response.data)
-        editmasActiveEl(response.data.filter(c=>c.type===selectedMenuItem))
+        editmasEl(response.data) 
          })
       
   },[])
  
-  React.useEffect(()=>{
-    editmasActiveEl(masEl.filter(c=>c.type===selectedMenuItem))
-  },[selectedMenuItem])
+  
   const showModal = () => {
     setIsModalOpen(true);
   };
@@ -61,7 +56,7 @@ const App = () => {
   const handleMenuClick = (e) => {
     setSelectedMenuItem(e.key);
   };
-  const masCard = masctiveEl.map(c=><CardElement adress={adress} gift={c}/>)
+  const masCard = masEl.filter(c=>c.type===selectedMenuItem).map(c=><CardElement adress={adress} gift={c}/>)
   return (
     <Layout style={{ minHeight: '100vh' }}>  
     
@@ -87,7 +82,7 @@ const App = () => {
 
           <Content style={{ margin: '16px', padding: '16px', background: '#fff' }} >
               <div style={{ display: 'flex',justifyContent: 'center', marginBottom: '16px',marginTop:'1%', width:'100%' }}> 
-                <Menu mode="horizontal" defaultSelectedKeys={["М'ясні"]} onClick={handleMenuClick} items={items1} style={{ borderBottom: 'none', display: 'flex', width:'100%',justifyContent: 'center', fontSize: 'clamp(16px, 2vw, 24px)' }} /> 
+                <Menu mode="horizontal" defaultSelectedKeys={["М'ясні"]} onClick={handleMenuClick} items={items1} style={{ borderBottom: 'none', display: 'flex', width:'100%',justifyContent: 'center', fontSize: 'clamp(10px, 2vw, 18px)' }} /> 
                 
               </div>
               <div style={{display:'flex', justifyContent:'end', marginLeft:'8%' }}>
@@ -97,7 +92,7 @@ const App = () => {
               <div  style={{marginLeft:'15%',marginRight:'15%', marginTop:'7%'}}>  
                   <Row gutter={[26, 26]}>
                         {masCard.map((card, index) => (
-                          <Col  key={index}  xs={8} sm={8} md={10} lg={10} xl={4}>
+                          <Col  key={index}  xs={8} sm={8} md={10} lg={10} xl={6}>
                               {card}
                           </Col>
                         ))}
@@ -148,8 +143,11 @@ const CardElement = (props) => {
   },[])
   return <Card hoverable style={{border:'none', textAlign:'center'}}
          cover={<img alt="example" src={printerImg}  />} >
-              <Meta title={props.gift.name} />
-              Вартість: {props.gift.price}
+             
+             <span style={{fontSize: 'clamp(6px, 1vw, 24px)', lineHeight: '0.8',fontWeight:'800'}}>{props.gift.name} </span> <br/>
+             <span style={{fontSize: 'clamp(6px, 1vw, 24px)', lineHeight: '0.8', }}> Вартість: {props.gift.price} грн </span>
+              
+            
           </Card>
 } 
 
