@@ -2,7 +2,7 @@ import React from 'react';
 import './index.css';
 import axios from 'axios'
 import { FilterOutlined, PlusOutlined, SearchOutlined  } from '@ant-design/icons';
-import { Breadcrumb, Layout, Menu, Card, Upload, Input, Row, Col, Select, InputNumber, Checkbox, Form, Modal, Button} from 'antd';
+import { Breadcrumb, Layout, Menu,Spin, Card, Upload, Input, Row, Col, Select, InputNumber, Checkbox, Form, Modal, Button} from 'antd';
 import {  FaInstagram, FaLinkedin } from 'react-icons/fa';
 import TextArea from 'antd/es/input/TextArea';
 import logo from './img/LogoEasyGift.png'
@@ -131,18 +131,21 @@ const App = () => {
 };
 
 const CardElement = (props) => {
-
+  let [loading, setLoading] = React.useState(true);
   let [printerImg,editprinterImg] = React.useState('')
-  console.log(printerImg)
+  
   React.useEffect(()=>{ 
       if(props.gift.img!==undefined && props.gift.img!=='' )
       axios.get(props.adress+'/imgfoto/'+props.gift.img, {responseType: "arraybuffer"})
       .then(function (response) {
          editprinterImg(URL.createObjectURL(new Blob([response.data],  {type:'image/png'})))
          })
-  },[])
+         setTimeout(() => {
+          setLoading(false); // Приховуємо лоадер після завантаження зображення
+        }, 300); 
+  },[props])
   return <Card hoverable style={{border:'none', textAlign:'center'}}
-         cover={<img alt="example" src={printerImg}  />} >
+         cover={ loading===true ? <Spin size="large" /> : <img alt="example" src={printerImg}  />} >
              
              <span style={{fontSize: 'clamp(6px, 1vw, 24px)', lineHeight: '0.8',fontWeight:'800'}}>{props.gift.name} </span> <br/>
              <span style={{fontSize: 'clamp(6px, 1vw, 24px)', lineHeight: '0.8', }}> Вартість: {props.gift.price} грн </span>
