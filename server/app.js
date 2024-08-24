@@ -30,22 +30,36 @@ const upload = multer({
   fileFilter: multerFilter,
 });
 
-const connection = mysql.createConnection({
-  host: "localhost",
-  user: "root",
-  database: "easygift",
-  password: "1111"
-});
-/////////Підключення Бази даних
 
-connection.connect(function(err){
+/////////Підключення Бази даних
+function handleDisconnect() {
+  const connection = mysql.createConnection({
+    host: "localhost",
+    user: "root",
+    database: "easygift",
+    password: "1111"});
+
+  connection.connect(function(err) {
     if (err) {
-      return console.error("Ошибка: " + err.message);
+      console.error("Error when connecting to database:", err);
+      setTimeout(handleDisconnect, 2000); // Повторна спроба через 2 секунди
     }
-    else{
-      console.log("Подключение к серверу MySQL успешно установлено");
+  });
+
+  connection.on("error", function(err) {
+    console.error("Database error:", err);
+    if (err.code === "PROTOCOL_CONNECTION_LOST") {
+      handleDisconnect(); // Відновлення підключення при розриві
+    } else {
+      throw err;
     }
- });
+  });
+
+  return connection;
+}
+
+const connection = handleDisconnect();
+
 
 
 
@@ -69,21 +83,21 @@ app.use(function (req, res, next) {
     next();
 });
 /////////GET запроси
-app.get("/gift", function(request, response){
+app.get("/api/gift", function(request, response){
   connection.query("SELECT * FROM gift", function(err, results, fields) {
     if (err) console.log(err);
     response.send(results);
 });    
 });
 
-app.get("/imgfoto/:name", function(request, response){
+app.get("/api/imgfoto/:name", function(request, response){
 
   let name = request.params.name
   let root = path.join(__dirname, 'img/')
   response.sendFile(root+name)
 ;})
 /////////POST запроси
-app.post("/addgift",jsonParser,  function(request, response){
+app.post("/api/addgift",jsonParser,  function(request, response){
   if(!request.body) return response.sendStatus(400);
     let obj = request.body;
     const print = [obj.name, obj.opis, obj.img, obj.price, obj.category, obj.from_gift, obj.type];
@@ -94,7 +108,7 @@ app.post("/addgift",jsonParser,  function(request, response){
     });
 });
 
-app.post("/update_gift", jsonParser, function(request, response){
+app.post("/api/update_gift", jsonParser, function(request, response){
   if(!request.body) return response.sendStatus(400);
     let obj = request.body; 
     const print = [obj.marka_print,obj.model_print,obj.info_print,obj.id];
@@ -105,7 +119,7 @@ app.post("/update_gift", jsonParser, function(request, response){
     });
 });
 
-app.post("/newimg",upload.single("avatar"), function(request, response){
+app.post("/api/newimg",upload.single("avatar"), function(request, response){
     console.log(request.file, request.body)
     response.send({code:200})
     
