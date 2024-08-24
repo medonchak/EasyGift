@@ -1,20 +1,19 @@
 import React from 'react';
 import './index.css';
 import axios from 'axios'
-import { FilterOutlined, PlusOutlined, SearchOutlined  } from '@ant-design/icons';
-import { Breadcrumb, Layout, Menu, Card, Upload, Input, Row, Col, Select, InputNumber, Checkbox, Form, Spin, Modal, Button} from 'antd';
-import {  FaInstagram, FaLinkedin } from 'react-icons/fa';
+import { FilterOutlined, PlusOutlined, ShoppingCartOutlined, GiftOutlined  } from '@ant-design/icons';
+import { Layout, Menu, Upload, Input, Row, Col, Spin, Select, InputNumber, Checkbox, Form, Modal, Button} from 'antd';
+import {  FaInstagram } from 'react-icons/fa';
 import TextArea from 'antd/es/input/TextArea';
 import logo from './img/LogoEasyGift.png'
+import style from './style.module.css'
 
-const { Header, Content, Footer, Sider } = Layout;
-const { Meta } = Card;
-const { Search } = Input;
+const { Header, Content, Footer } = Layout;
 const { Option } = Select;
 
 
 const App = () => {
-  const adress = 'https://easy-gift-ua.pp.ua/api'
+  const adress = 'http://localhost:3001/api'
   const [isModalOpen, setIsModalOpen] = React.useState(false);
   const [isModalOpenAddGift, setIsModalOpenAddGift] = React.useState(false);
   const [masEl,editmasEl] = React.useState([])
@@ -29,7 +28,6 @@ const App = () => {
       .then(function (response) {
         editmasEl(response.data) 
          })
-      
   },[])
  
   
@@ -45,13 +43,10 @@ const App = () => {
   const showModalAddGift = () => {
     setIsModalOpenAddGift(true);
   };
-  const handleOkAddGift = () => {
-    setIsModalOpenAddGift(false);
-  };
+
   const handleCancelAddGift = () => {
     setIsModalOpenAddGift(false);
   };
-
 
   const handleMenuClick = (e) => {
     setSelectedMenuItem(e.key);
@@ -60,21 +55,15 @@ const App = () => {
   return (
     <Layout style={{ minHeight: '100vh' }}>  
     
-          <Header style={{ background: '#fff', margin: '16px', padding: '0 16px', display: 'flex', alignItems: 'center',height: '10%', justifyContent: 'space-between', background: 'transparent' }}>
+          <Header style={{ margin: '16px', padding: '0 16px', display: 'flex', alignItems: 'center',height: '10%', justifyContent: 'space-between', background: 'transparent' }}>
      
             <div style={{ display: 'flex', alignItems: 'center', marginLeft:'5%' }}>
-                <img src={logo} alt="Logo" style={{ height: '35%', width: '35%', zIndex:'100' }} />
-                <span style={{ fontSize: 'clamp(16px, 2vw, 24px)',  fontWeight: 'bold', padding:'0',margin:'0',lineHeight: '1.1' }}> Майстерня смачних подарунків 
-                  <br/> Easy.Gift.UA </span>
+                <img src={logo} alt="Logo" className={style.logo} />
+                <span style={{ fontSize: 'clamp(6px, 2vw, 24px)',  fontWeight: 'bold', padding:'0',margin:'0',lineHeight: '1.1' }}> Майстерня смачних подарунків </span>
             </div>
             <div style={{ display: 'flex', alignItems: 'center', marginRight:'5%' }}>
-              <FilterOutlined onClick={showModal} style={{fontSize:'25px',marginRight:'10px'}}/>
-              <Search
-                placeholder="Пошук..."
-                enterButton={<SearchOutlined />}
-                size= {window.innerWidth <= 768 ? "small" : "large"}
-                style={{  maxWidth:'400px', width: '25vw', marginRight:'8%',fontSize:'clamp(16px, 2vw, 24px)' }}
-              />
+              <FilterOutlined onClick={showModal} style={{fontSize:'clamp(6px, 3vw, 24px)',marginRight:'10px'}}/>
+              <GiftOutlined onClick={showModalAddGift} style={{fontSize:'clamp(6px, 3vw, 24px)',marginRight:'10px'}}/>
              
             </div>
               
@@ -85,14 +74,12 @@ const App = () => {
                 <Menu mode="horizontal" defaultSelectedKeys={["М'ясні"]} onClick={handleMenuClick} items={items1} style={{ borderBottom: 'none', display: 'flex', width:'100%',justifyContent: 'center', fontSize: 'clamp(10px, 2vw, 18px)' }} /> 
                 
               </div>
-              <div style={{display:'flex', justifyContent:'end', marginLeft:'8%' }}>
-                  <Button type="primary" onClick={showModalAddGift}>Добавити подарунок</Button>
-              </div>
+
               
               <div  style={{marginLeft:'15%',marginRight:'15%', marginTop:'7%'}}>  
-                  <Row gutter={[26, 26]}>
+                  <Row gutter={[16, 16]}>
                         {masCard.map((card, index) => (
-                          <Col  key={index}  xs={8} sm={8} md={10} lg={10} xl={6}>
+                          <Col  key={index}  xs={8} sm={8} md={6} lg={6} xl={4}>
                               {card}
                           </Col>
                         ))}
@@ -135,6 +122,7 @@ const CardElement = (props) => {
   let [printerImg,editprinterImg] = React.useState('')
   
   React.useEffect(()=>{ 
+      editloading(true)
       if(props.gift.img!==undefined && props.gift.img!=='' ) {
         axios.get(props.adress+'/imgfoto/'+props.gift.img, {responseType: "arraybuffer"})
         .then(function (response) {
@@ -146,14 +134,18 @@ const CardElement = (props) => {
       }, 300); 
     
   },[props])
-  return <Card hoverable style={{border:'none', textAlign:'center'}}
-         cover={loading===true ? <Spin size="large" /> :  <img alt="example" src={printerImg}  />} >
-             
-             <span style={{fontSize: 'clamp(6px, 1vw, 24px)', lineHeight: '0.8',fontWeight:'800'}}>{props.gift.name} </span> <br/>
-             <span style={{fontSize: 'clamp(6px, 1vw, 24px)', lineHeight: '0.8', }}> Вартість: {props.gift.price} грн </span>
+  return <div className={style.card}>
+              <div className={style.imagecontainer}>  
+                  {loading===true ? <Spin size="large" /> :  <img alt="example" src={printerImg} className={style.imggift}  />} 
+              </div>
+              <div className={style.opisGift}>
+                  <span className={style.textName}>{props.gift.name} </span> <br/>
+                  <span className={style.textPrice}> {props.gift.price} грн </span>
+                  <ShoppingCartOutlined  style={{fontSize:'clamp(6px, 0.8vw, 24px)'}}/>
+                 
+              </div>
               
-            
-          </Card>
+          </div>
 } 
 
 const FilterBlock = () => {
