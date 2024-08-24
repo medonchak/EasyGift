@@ -1,0 +1,43 @@
+.logo{
+    height: 35%;
+    width: 35%;
+    z-index: 100;
+}
+.card{
+    border: none; 
+    text-align: center;
+    margin: 20px;
+    width: 100%;
+    padding: 2px;
+    margin: 5px;
+}
+.imagecontainer {
+    display: flex;
+    width: 100%;
+    height: 80%;
+    align-items: center;
+    justify-content: center;
+    height: 100%; /* А /* Забезпечує приховування виходячих за межі зображення частин */
+  }
+.imggift{
+    width: 100%;
+    height: 100%;
+}
+.opisGift{
+    width: 100%;
+    height: 20%;
+    margin: 0;
+    padding: 0;
+}
+.textPrice {
+    font-size: clamp(6px, 0.6vw, 24px);
+    color: #ee0808;
+    font-weight: 600;
+}
+.textName {
+    font-size: clamp(6px, 0.6vw, 24px);
+    font-weight: 800;
+    border-radius: 5%;
+}
+
+ 
